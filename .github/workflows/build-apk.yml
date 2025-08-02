@@ -14,18 +14,55 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Build with Buildozer
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
+    - name: Setup Python
+      uses: actions/setup-python@v4
       with:
-        command: buildozer android debug
-        buildozer_version: stable
+        python-version: '3.9'
+        
+    - name: Cache buildozer global directory
+      uses: actions/cache@v3
+      with:
+        path: ~/.buildozer
+        key: buildozer-${{ hashFiles('buildozer.spec') }}
+        
+    - name: Cache buildozer dependencies
+      uses: actions/cache@v3
+      with:
+        path: .buildozer
+        key: buildozer-deps-${{ hashFiles('buildozer.spec') }}
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git zip unzip openjdk-8-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+        pip3 install --upgrade pip setuptools wheel
+        pip3 install buildozer cython
+        
+    - name: Verify buildozer installation
+      run: |
+        buildozer --version
+        python3 --version
+        
+    - name: Build with Buildozer
+      id: buildozer
+      run: |
+        buildozer android debug --verbose
+      env:
+        ANDROID_HOME: /opt/android-sdk-linux
+        JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
+        
+    - name: Find APK file
+      id: find_apk
+      run: |
+        APK_PATH=$(find bin -name "*.apk" | head -1)
+        echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+        echo "Found APK: $APK_PATH"
         
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: android-apk
-        path: ${{ steps.buildozer.outputs.filename }}
+        path: ${{ steps.find_apk.outputs.apk_path }}
         
   release:
     needs: build

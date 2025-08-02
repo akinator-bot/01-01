@@ -11,28 +11,22 @@ import re
 import json
 import random
 import statistics
-from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass
 
-# 尝试导入baostock，如果失败则使用模拟数据
-try:
-    import baostock as bs
-    HAS_BAOSTOCK = True
-except ImportError:
-    HAS_BAOSTOCK = False
-    print("警告: baostock未安装，将使用模拟数据")
+# 完全移除baostock依赖，使用纯Python模拟数据
+HAS_BAOSTOCK = False
+print("使用纯Python模拟数据模式，避免C扩展编译问题")
 
-@dataclass
 class MobileStockData:
     """移动端股票数据结构（简化版）"""
-    symbol: str
-    name: str
-    current_price: float
-    change_pct: float
-    volume: int
-    market_cap: float
-    pe_ratio: float
-    pb_ratio: float
+    def __init__(self, symbol, name, current_price, change_pct, volume, market_cap, pe_ratio, pb_ratio):
+        self.symbol = symbol
+        self.name = name
+        self.current_price = current_price
+        self.change_pct = change_pct
+        self.volume = volume
+        self.market_cap = market_cap
+        self.pe_ratio = pe_ratio
+        self.pb_ratio = pb_ratio
     
 class MobileNLPParser:
     """移动端自然语言解析器（轻量级）"""
@@ -62,7 +56,7 @@ class MobileNLPParser:
             'volume_gt': r'(?:成交量)(?:大于|超过|高于)([\d.]+)(?:万手|手|万)?',
         }
     
-    def parse_rule(self, rule_text: str) -> Dict:
+    def parse_rule(self, rule_text):
         """解析自然语言规则"""
         conditions = []
         confidence = 0.8
@@ -109,7 +103,7 @@ class MobileDataProvider:
         except Exception as e:
             print(f"BaoStock登录异常: {e}")
     
-    def get_stock_list(self) -> List[Dict]:
+    def get_stock_list(self):
         """获取股票列表（简化版）"""
         if not HAS_BAOSTOCK or not self.logged_in:
             return self._get_mock_stock_list()
@@ -149,7 +143,7 @@ class MobileDataProvider:
             print(f"获取股票列表失败: {e}")
             return self._get_mock_stock_list()
     
-    def _get_mock_stock_list(self) -> List[Dict]:
+    def _get_mock_stock_list(self):
         """获取模拟股票数据"""
         mock_stocks = [
             {'代码': '000001', '名称': '平安银行', '现价': 12.50, '涨跌幅': 2.1, '成交量': 50000, '市值(亿)': 2400, 'PE': 6.5, 'PB': 0.8},
@@ -176,7 +170,7 @@ class MobileDataProvider:
         
         return mock_stocks
     
-    def get_stock_info(self, code: str) -> Optional[MobileStockData]:
+    def get_stock_info(self, code):
         """获取单个股票信息"""
         stock_list = self.get_stock_list()
         
@@ -204,7 +198,7 @@ class MobileStockAnalyzer:
         self.initialized = True
         print("移动端股票分析器初始化完成")
     
-    def screen_stocks_by_rule(self, rule_text: str, limit: int = 50) -> List[Dict]:
+    def screen_stocks_by_rule(self, rule_text, limit=50):
         """根据规则筛选股票"""
         try:
             # 解析规则
@@ -229,7 +223,7 @@ class MobileStockAnalyzer:
             print(f"筛选股票失败: {e}")
             return []
     
-    def _match_conditions(self, stock: Dict, conditions: List[Dict]) -> bool:
+    def _match_conditions(self, stock, conditions):
         """检查股票是否匹配条件"""
         for condition in conditions:
             condition_type = condition['type']
@@ -273,7 +267,7 @@ class MobileStockAnalyzer:
         
         return True
     
-    def analyze_stock(self, code: str, days: int = 60) -> Optional[MobileStockData]:
+    def analyze_stock(self, code, days=60):
         """分析单个股票"""
         try:
             return self.data_provider.get_stock_info(code)
@@ -281,7 +275,7 @@ class MobileStockAnalyzer:
             print(f"分析股票 {code} 失败: {e}")
             return None
     
-    def get_market_summary(self) -> Dict:
+    def get_market_summary(self):
         """获取市场概况"""
         try:
             stocks = self.data_provider.get_stock_list()

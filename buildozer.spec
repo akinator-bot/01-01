@@ -40,7 +40,8 @@ version = 1.0
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
 # 注意：完全移除pandas和numpy以避免Android构建失败
-requirements = python3,kivy,requests,baostock
+# 移除baostock以避免C扩展编译问题，使用纯Python模拟数据
+requirements = python3,kivy,requests
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -106,16 +107,16 @@ android.permissions = INTERNET,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE,READ_
 #android.library_references = @jar/foo.jar:@jar/bar.jar
 
 # (int) Target Android API, should be as high as possible.
-android.api = 29
+android.api = 28
 
 # (int) Minimum API your APK will support.
 android.minapi = 21
 
 # (int) Android SDK version to use
-android.sdk = 29
+android.sdk = 28
 
 # (str) Android NDK version to use
-android.ndk = 23b
+android.ndk = 22b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 android.ndk_api = 21
@@ -145,7 +146,8 @@ android.accept_sdk_license = True
 
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 # In past, was `android.arch` as we weren't supporting builds for multiple archs at the same time.
-android.archs = arm64-v8a, armeabi-v7a
+# 简化为单一架构以减少构建复杂性
+android.archs = arm64-v8a
 
 # (int) overrides automatic versionCode computation (used in build.gradle)
 # this is not the same as app version and should only be edited if you know what you're doing
