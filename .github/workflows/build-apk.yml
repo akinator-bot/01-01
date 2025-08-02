@@ -61,13 +61,12 @@ jobs:
           zlib1g-dev \
           libncurses5-dev \
           libncursesw5-dev \
-          libtinfo5 \
+          libtinfo6 \
           cmake \
-          libffi6 \
+          libffi8 \
           libgmp-dev \
           libmpc-dev \
           libmpfr-dev \
-          libssl-dev \
           make \
           wget \
           zip \
@@ -75,12 +74,7 @@ jobs:
           openjdk-17-jdk \
           autoconf \
           libtool \
-          pkg-config \
-          libncurses5-dev \
-          libncursesw5-dev \
-          libtinfo5 \
-          cmake \
-          libffi6
+          pkg-config
           
     - name: Install Python dependencies
       run: |
