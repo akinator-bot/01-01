@@ -106,16 +106,16 @@ android.permissions = INTERNET,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE,READ_
 #android.library_references = @jar/foo.jar:@jar/bar.jar
 
 # (int) Target Android API, should be as high as possible.
-android.api = 30
+android.api = 29
 
-# (int) Minimum API your APK / AAB will support.
+# (int) Minimum API your APK will support.
 android.minapi = 21
 
 # (int) Android SDK version to use
-android.sdk = 30
+android.sdk = 29
 
 # (str) Android NDK version to use
-# android.ndk = 25b
+android.ndk = 23b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 android.ndk_api = 21
