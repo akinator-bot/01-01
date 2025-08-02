@@ -13,7 +13,7 @@ package.domain = com.stockanalysis.app
 source.dir = .
 
 # (str) Main entry point
-source.main = main_mobile.py
+source.main = main_simple.py
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas,txt,json
@@ -107,16 +107,16 @@ android.permissions = INTERNET,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE,READ_
 #android.library_references = @jar/foo.jar:@jar/bar.jar
 
 # (int) Target Android API, should be as high as possible.
-android.api = 28
+android.api = 27
 
 # (int) Minimum API your APK will support.
 android.minapi = 21
 
 # (int) Android SDK version to use
-android.sdk = 28
+android.sdk = 27
 
 # (str) Android NDK version to use
-android.ndk = 22b
+android.ndk = 21b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 android.ndk_api = 21
