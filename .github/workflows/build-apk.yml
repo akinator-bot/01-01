@@ -35,21 +35,44 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-8-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+        sudo apt-get install -y build-essential ccache m4 libtool automake
         pip3 install --upgrade pip setuptools wheel
-        pip3 install buildozer cython
+        pip3 install buildozer==1.5.0 cython==0.29.36
         
     - name: Verify buildozer installation
       run: |
         buildozer --version
         python3 --version
         
+    - name: Setup Android environment
+      run: |
+        export ANDROID_HOME=$HOME/android-sdk
+        export ANDROID_SDK_ROOT=$ANDROID_HOME
+        export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+        mkdir -p $ANDROID_HOME
+        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $GITHUB_ENV
+        
     - name: Build with Buildozer
       id: buildozer
       run: |
+        echo "Starting buildozer build..."
+        echo "Python version: $(python3 --version)"
+        echo "Buildozer version: $(buildozer --version)"
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        echo "JAVA_HOME: $JAVA_HOME"
+        
+        # Initialize buildozer
+        buildozer init || echo "Buildozer already initialized"
+        
+        # Build with maximum verbosity
         buildozer android debug --verbose
       env:
-        ANDROID_HOME: /opt/android-sdk-linux
-        JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
+        ANDROID_HOME: ${{ env.ANDROID_HOME }}
+        ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
+        JAVA_HOME: ${{ env.JAVA_HOME }}
+        PYTHONUNBUFFERED: 1
         
     - name: Find APK file
       id: find_apk
