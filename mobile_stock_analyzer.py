@@ -3,17 +3,16 @@
 """
 移动端股票分析器
 专为Android应用优化的轻量级股票分析模块
+不依赖pandas/numpy，仅使用Python标准库
 """
 
-import pandas as pd
-import numpy as np
 from datetime import datetime, timedelta
 import re
 import json
+import random
+import statistics
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
-import warnings
-warnings.filterwarnings('ignore')
 
 # 尝试导入baostock，如果失败则使用模拟数据
 try:
@@ -132,12 +131,12 @@ class MobileDataProvider:
                         stock_list.append({
                             '代码': row[1].split('.')[-1],  # 去掉前缀
                             '名称': row[2],
-                            '现价': round(np.random.uniform(5, 50), 2),  # 模拟价格
-                            '涨跌幅': round(np.random.uniform(-10, 10), 2),
-                            '成交量': int(np.random.uniform(1000, 100000)),
-                            '市值(亿)': round(np.random.uniform(10, 1000), 2),
-                            'PE': round(np.random.uniform(5, 50), 2),
-                            'PB': round(np.random.uniform(0.5, 5), 2)
+                            '现价': round(random.uniform(5, 50), 2),  # 模拟价格
+                            '涨跌幅': round(random.uniform(-10, 10), 2),
+                            '成交量': int(random.uniform(1000, 100000)),
+                            '市值(亿)': round(random.uniform(10, 1000), 2),
+                            'PE': round(random.uniform(5, 50), 2),
+                            'PB': round(random.uniform(0.5, 5), 2)
                         })
                         count += 1
                 
@@ -167,9 +166,9 @@ class MobileDataProvider:
         
         # 添加一些随机变化
         for stock in mock_stocks:
-            stock['现价'] *= np.random.uniform(0.95, 1.05)
-            stock['涨跌幅'] += np.random.uniform(-1, 1)
-            stock['成交量'] = int(stock['成交量'] * np.random.uniform(0.8, 1.2))
+            stock['现价'] *= random.uniform(0.95, 1.05)
+            stock['涨跌幅'] += random.uniform(-1, 1)
+            stock['成交量'] = int(stock['成交量'] * random.uniform(0.8, 1.2))
             
             # 四舍五入
             stock['现价'] = round(stock['现价'], 2)
@@ -295,8 +294,8 @@ class MobileStockAnalyzer:
             
             return {
                 'total_stocks': len(stocks),
-                'avg_price': round(np.mean(prices), 2),
-                'avg_change': round(np.mean(changes), 2),
+                'avg_price': round(statistics.mean(prices), 2),
+                'avg_change': round(statistics.mean(changes), 2),
                 'rising_count': len([c for c in changes if c > 0]),
                 'falling_count': len([c for c in changes if c < 0]),
                 'flat_count': len([c for c in changes if c == 0])

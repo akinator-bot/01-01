@@ -1,29 +1,27 @@
-# 股票分析系统依赖包
+# 移动端股票分析应用依赖
+# 这些依赖将由buildozer在构建Android APK时自动安装
 
-# 数据获取
-akshare>=1.16.0
-baostock>=0.8.9
+# 核心框架
+kivy>=2.1.0
 
-# 数据处理
-pandas>=1.5.0
-numpy>=1.21.0
+# 网络请求
+requests>=2.25.0
 
-# 可视化
-matplotlib>=3.5.0
-seaborn>=0.11.0
+# 数据获取（可选，用于真实数据）
+baostock>=0.8.8
 
-# GUI界面
-# tkinter是Python标准库，无需安装
+# 注意：不再包含以下重型依赖，因为它们在Android构建中会导致问题：
+# - pandas (已移除，使用Python标准库替代)
+# - numpy (已移除，使用Python标准库替代)
+# - matplotlib (移动端不需要复杂图表)
+# - seaborn (移动端不需要)
+# - openpyxl (移动端不需要Excel导出)
+# - xlsxwriter (移动端不需要Excel导出)
+# - akshare (依赖过多，移动端使用简化数据源)
 
-# 数据导出
-openpyxl>=3.0.0
-xlsxwriter>=3.0.0
-
-# 其他工具
-datetime
-typing-extensions>=4.0.0
-dataclasses; python_version<'3.7'
-
-# 可选：更好的数据处理性能
-# numba>=0.56.0
-# scipy>=1.7.0
+# 所有数据处理现在使用Python标准库：
+# - random (随机数生成)
+# - statistics (统计计算)
+# - datetime (时间处理)
+# - json (数据序列化)
+# - urllib (网络请求，requests的轻量替代)

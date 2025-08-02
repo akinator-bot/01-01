@@ -1,26 +1,29 @@
 # Android移动端专用依赖包
 # 只包含与Android兼容的轻量级依赖
+# 完全移除pandas和numpy以避免构建失败
 
 # 核心框架
 kivy>=2.1.0
 
-# 数据处理（轻量级版本）
-pandas>=1.3.0
-numpy>=1.21.0
-
 # 网络请求
 requests>=2.25.0
 
-# 类型注解支持
-typing-extensions>=4.0.0
+# 股票数据源（轻量级）
+baostock>=0.8.8
 
-# 数据类支持（Python < 3.7）
-dataclasses; python_version<'3.7'
-
-# 注意：以下包在Android上不兼容，已移除：
+# 注意：以下包在Android上不兼容，已完全移除：
+# - pandas (C扩展，编译复杂，buildozer经常失败)
+# - numpy (C扩展，编译复杂，buildozer经常失败)
 # - akshare (依赖过多，不适合移动端)
-# - baostock (C扩展，Android不支持)
 # - matplotlib (图形库，Android支持有限)
 # - seaborn (基于matplotlib)
 # - openpyxl (文件操作，移动端不需要)
 # - xlsxwriter (文件操作，移动端不需要)
+# - typing-extensions (Python 3.8+已内置)
+# - dataclasses (Python 3.7+已内置)
+
+# 数据处理改用Python标准库：
+# - statistics (替代numpy的基础统计功能)
+# - random (替代numpy.random)
+# - json (替代pandas的数据处理)
+# - csv (替代pandas的CSV处理)

@@ -22,10 +22,13 @@ source.include_exts = py,png,jpg,kv,atlas,txt,json
 #source.include_patterns = assets/*,images/*.png
 
 # (list) Source files to exclude (let empty to not exclude anything)
-#source.exclude_exts = spec
+source.exclude_exts = spec
 
 # (list) List of directory to exclude (let empty to not exclude anything)
 source.exclude_dirs = tests,bin,.git,__pycache__,.pytest_cache
+
+# (list) Exclude desktop-only files that use pandas/numpy
+source.exclude_patterns = main.py,stock_analyzer.py,enhanced_gui.py,stock_gui.py,enhanced_nlp_parser.py,requirements.txt,requirements_mobile.txt
 
 # (str) Application versioning (method 1)
 version = 1.0
@@ -36,7 +39,8 @@ version = 1.0
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,requests,pandas,numpy
+# 注意：完全移除pandas和numpy以避免Android构建失败
+requirements = python3,kivy,requests,baostock
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -102,25 +106,25 @@ android.permissions = INTERNET,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE,READ_
 #android.library_references = @jar/foo.jar:@jar/bar.jar
 
 # (int) Target Android API, should be as high as possible.
-android.api = 31
+android.api = 28
 
 # (int) Minimum API your APK / AAB will support.
-android.minapi = 23
+android.minapi = 21
 
 # (int) Android SDK version to use
-android.sdk = 31
+android.sdk = 28
 
 # (str) Android NDK version to use
-android.ndk = 23c
+android.ndk = 21b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
-android.ndk_api = 23
+android.ndk_api = 21
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
-android.ndk_path = /usr/local/lib/android/sdk/ndk/23.2.8568313
+#android.ndk_path =
 
 # (str) Android SDK directory (if empty, it will be automatically downloaded.)
 #android.sdk_path =
