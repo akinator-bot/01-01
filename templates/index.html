@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能股票分析系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #2196F3;
+            border-bottom: 3px solid #2196F3;
+        }
+        
+        .nav-tab:hover {
+            background: #e9e9e9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .stock-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #2196F3;
+            transition: transform 0.2s;
+        }
+        
+        .stock-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .stock-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .stock-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            color: #666;
+        }
+        
+        .info-value {
+            font-weight: bold;
+        }
+        
+        .positive {
+            color: #4CAF50;
+        }
+        
+        .negative {
+            color: #F44336;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .stock-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 智能股票分析系统</h1>
+            <p>专业的股票数据分析与筛选工具</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('screen')">智能筛选</button>
+            <button class="nav-tab" onclick="showTab('analyze')">个股分析</button>
+            <button class="nav-tab" onclick="showTab('market')">市场概况</button>
+        </div>
+        
+        <div class="content">
+            <!-- 智能筛选 -->
+            <div id="screen" class="tab-content active">
+                <h2>🔍 智能股票筛选</h2>
+                <div class="form-group">
+                    <label for="screenRule">筛选规则：</label>
+                    <input type="text" id="screenRule" class="form-control" 
+                           placeholder="例如：涨幅>5% 或 市值>100亿 或 PE<20">
+                </div>
+                <div class="form-group">
+                    <label for="screenLimit">显示数量：</label>
+                    <input type="number" id="screenLimit" class="form-control" value="20" min="1" max="100">
+                </div>
+                <button class="btn" onclick="screenStocks()">开始筛选</button>
+                <div id="screenResults" class="results"></div>
+            </div>
+            
+            <!-- 个股分析 -->
+            <div id="analyze" class="tab-content">
+                <h2>📊 个股深度分析</h2>
+                <div class="form-group">
+                    <label for="stockCode">股票代码：</label>
+                    <input type="text" id="stockCode" class="form-control" 
+                           placeholder="请输入股票代码，如：000001">
+                </div>
+                <button class="btn" onclick="analyzeStock()">分析股票</button>
+                <div id="analyzeResults" class="results"></div>
+            </div>
+            
+            <!-- 市场概况 -->
+            <div id="market" class="tab-content">
+                <h2>🌍 市场概况</h2>
+                <button class="btn" onclick="getMarketSummary()">刷新数据</button>
+                <div id="marketResults" class="results"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 切换标签页
+        function showTab(tabName) {
+            // 隐藏所有标签内容
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // 移除所有标签的激活状态
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // 显示选中的标签内容
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 股票筛选
+        async function screenStocks() {
+            const rule = document.getElementById('screenRule').value;
+            const limit = parseInt(document.getElementById('screenLimit').value);
+            const resultsDiv = document.getElementById('screenResults');
+            
+            if (!rule.trim()) {
+                resultsDiv.innerHTML = '<div class="error">请输入筛选规则</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">正在筛选股票...</div>';
+            
+            try {
+                const response = await fetch('/api/screen', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rule, limit })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayStocks(data.data, resultsDiv, `找到 ${data.count} 只符合条件的股票`);
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">筛选失败: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">网络错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 个股分析
+        async function analyzeStock() {
+            const code = document.getElementById('stockCode').value;
+            const resultsDiv = document.getElementById('analyzeResults');
+            
+            if (!code.trim()) {
+                resultsDiv.innerHTML = '<div class="error">请输入股票代码</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">正在分析股票...</div>';
+            
+            try {
+                const response = await fetch(`/api/analyze/${code}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stock = data.data;
+                    resultsDiv.innerHTML = `
+                        <div class="stock-card">
+                            <div class="stock-name">${stock.name} (${stock.symbol})</div>
+                            <div class="stock-info">
+                                <div class="info-item">
+                                    <span class="info-label">当前价格:</span>
+                                    <span class="info-value">¥${stock.current_price}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">涨跌幅:</span>
+                                    <span class="info-value ${stock.change_pct >= 0 ? 'positive' : 'negative'}">
+                                        ${stock.change_pct >= 0 ? '+' : ''}${stock.change_pct}%
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">成交量:</span>
+                                    <span class="info-value">${stock.volume}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">市值:</span>
+                                    <span class="info-value">${stock.market_cap}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">市盈率:</span>
+                                    <span class="info-value">${stock.pe_ratio}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">市净率:</span>
+                                    <span class="info-value">${stock.pb_ratio}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">分析失败: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">网络错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 市场概况
+        async function getMarketSummary() {
+            const resultsDiv = document.getElementById('marketResults');
+            resultsDiv.innerHTML = '<div class="loading">正在获取市场数据...</div>';
+            
+            try {
+                const response = await fetch('/api/market');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const summary = data.data;
+                    resultsDiv.innerHTML = `
+                        <div class="stock-card">
+                            <div class="stock-name">📈 市场概况</div>
+                            <div class="stock-info">
+                                <div class="info-item">
+                                    <span class="info-label">上涨家数:</span>
+                                    <span class="info-value positive">${summary.up_count}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">下跌家数:</span>
+                                    <span class="info-value negative">${summary.down_count}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">平盘家数:</span>
+                                    <span class="info-value">${summary.flat_count}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">平均涨幅:</span>
+                                    <span class="info-value ${summary.avg_change >= 0 ? 'positive' : 'negative'}">
+                                        ${summary.avg_change >= 0 ? '+' : ''}${summary.avg_change.toFixed(2)}%
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">总成交额:</span>
+                                    <span class="info-value">${summary.total_volume}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">活跃股票:</span>
+                                    <span class="info-value">${summary.active_stocks}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">获取失败: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">网络错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 显示股票列表
+        function displayStocks(stocks, container, title) {
+            if (stocks.length === 0) {
+                container.innerHTML = '<div class="error">未找到符合条件的股票</div>';
+                return;
+            }
+            
+            let html = `<h3>${title}</h3>`;
+            stocks.forEach(stock => {
+                html += `
+                    <div class="stock-card">
+                        <div class="stock-name">${stock['名称']} (${stock['代码']})</div>
+                        <div class="stock-info">
+                            <div class="info-item">
+                                <span class="info-label">现价:</span>
+                                <span class="info-value">¥${stock['现价']}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">涨跌幅:</span>
+                                <span class="info-value ${stock['涨跌幅'] >= 0 ? 'positive' : 'negative'}">
+                                    ${stock['涨跌幅'] >= 0 ? '+' : ''}${stock['涨跌幅']}%
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">成交量:</span>
+                                <span class="info-value">${stock['成交量']}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">市值:</span>
+                                <span class="info-value">${stock['市值']}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        
+        // 页面加载完成后自动获取市场概况
+        window.addEventListener('load', function() {
+            // 可以在这里添加初始化代码
+        });
+    </script>
+</body>
+</html>
