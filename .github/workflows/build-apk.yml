@@ -84,12 +84,23 @@ jobs:
         
     - name: Install app dependencies
       run: |
-        pip install -r requirements.txt || echo "requirements.txt not found, skipping"
+        # Install Android-compatible dependencies
+        if [ -f requirements_android.txt ]; then
+          pip install -r requirements_android.txt
+        else
+          # Fallback to manual installation
+          pip install pandas numpy
+        fi
         
-    - name: Create main.py symlink
+    - name: Verify mobile files
       run: |
-        if [ ! -f main.py ]; then
-          ln -s main_mobile.py main.py
+        if [ ! -f main_mobile.py ]; then
+          echo "main_mobile.py not found!"
+          exit 1
+        fi
+        if [ ! -f mobile_stock_analyzer.py ]; then
+          echo "mobile_stock_analyzer.py not found!"
+          exit 1
         fi
         
     - name: Verify buildozer.spec
@@ -102,28 +113,49 @@ jobs:
         
     - name: Download and setup NDK 23c
       run: |
+        # Create NDK directory
+        sudo mkdir -p /usr/local/lib/android/sdk/ndk
+        
         # Download NDK 23c
         wget -q https://dl.google.com/android/repository/android-ndk-r23c-linux.zip
         unzip -q android-ndk-r23c-linux.zip
         sudo mv android-ndk-r23c /usr/local/lib/android/sdk/ndk/23.2.8568313
         
+        # Set permissions
+        sudo chmod -R 755 /usr/local/lib/android/sdk/ndk/23.2.8568313
+        
         # Set NDK environment variables
         echo "ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/23.2.8568313" >> $GITHUB_ENV
         echo "ANDROID_NDK=/usr/local/lib/android/sdk/ndk/23.2.8568313" >> $GITHUB_ENV
         
+        # Verify NDK installation
+        ls -la /usr/local/lib/android/sdk/ndk/23.2.8568313
+        
     - name: Build APK with buildozer
       run: |
+        # Set environment variables
         export ANDROID_SDK_ROOT=$ANDROID_HOME
         export ANDROID_HOME=$ANDROID_HOME
         export ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/23.2.8568313
         export ANDROID_NDK=/usr/local/lib/android/sdk/ndk/23.2.8568313
         export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
         
+        # Print environment info for debugging
+        echo "=== Environment Info ==="
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
+        echo "Python version: $(python --version)"
+        echo "Buildozer version: $(buildozer version)"
+        echo "Java version: $(java -version)"
+        
         # Accept Android SDK licenses
         yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
         
-        # Build the APK
-        buildozer android debug
+        # Clean previous builds
+        buildozer android clean || true
+        
+        # Build the APK with verbose output
+        buildozer -v android debug
         
     - name: List build outputs
       run: |

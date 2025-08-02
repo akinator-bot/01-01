@@ -1,0 +1,26 @@
+# Android移动端专用依赖包
+# 只包含与Android兼容的轻量级依赖
+
+# 核心框架
+kivy>=2.1.0
+
+# 数据处理（轻量级版本）
+pandas>=1.3.0
+numpy>=1.21.0
+
+# 网络请求
+requests>=2.25.0
+
+# 类型注解支持
+typing-extensions>=4.0.0
+
+# 数据类支持（Python < 3.7）
+dataclasses; python_version<'3.7'
+
+# 注意：以下包在Android上不兼容，已移除：
+# - akshare (依赖过多，不适合移动端)
+# - baostock (C扩展，Android不支持)
+# - matplotlib (图形库，Android支持有限)
+# - seaborn (基于matplotlib)
+# - openpyxl (文件操作，移动端不需要)
+# - xlsxwriter (文件操作，移动端不需要)

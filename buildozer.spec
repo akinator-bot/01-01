@@ -12,6 +12,9 @@ package.domain = com.stockanalysis.app
 # (str) Source code where the main.py live
 source.dir = .
 
+# (str) Main entry point
+source.main = main_mobile.py
+
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas,txt,json
 
@@ -33,7 +36,7 @@ version = 1.0
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,requests
+requirements = python3,kivy,requests,pandas,numpy
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

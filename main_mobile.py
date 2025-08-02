@@ -19,8 +19,9 @@ from kivy.clock import Clock
 from kivy.metrics import dp
 from kivy.utils import platform
 import threading
-import asyncio
 from datetime import datetime
+
+# 移除asyncio导入，在Android上可能有兼容性问题
 
 # 导入核心分析模块
 try:
