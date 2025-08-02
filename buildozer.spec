@@ -99,25 +99,25 @@ android.permissions = INTERNET,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE,READ_
 #android.library_references = @jar/foo.jar:@jar/bar.jar
 
 # (int) Target Android API, should be as high as possible.
-android.api = 30
+android.api = 31
 
 # (int) Minimum API your APK / AAB will support.
-android.minapi = 21
+android.minapi = 23
 
 # (int) Android SDK version to use
-android.sdk = 30
+android.sdk = 31
 
 # (str) Android NDK version to use
-android.ndk = 25b
+android.ndk = 23c
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
-android.ndk_api = 21
+android.ndk_api = 23
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
-android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653
+android.ndk_path = /usr/local/lib/android/sdk/ndk/23.2.8568313
 
 # (str) Android SDK directory (if empty, it will be automatically downloaded.)
 #android.sdk_path =
