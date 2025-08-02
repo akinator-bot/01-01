@@ -32,13 +32,13 @@ jobs:
       uses: android-actions/setup-android@v2
       
     - name: Cache buildozer global directory
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: .buildozer_global
         key: buildozer-global-${{ hashFiles('buildozer.spec') }}
         
     - name: Cache buildozer directory
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: .buildozer
         key: buildozer-${{ hashFiles('buildozer.spec') }}
@@ -143,7 +143,7 @@ jobs:
         echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
         
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: android-apk
         path: ${{ steps.find_apk.outputs.apk_path }}
